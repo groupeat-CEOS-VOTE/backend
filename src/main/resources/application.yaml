@@ -17,3 +17,7 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+
+vote:
+  demoday:
+    total-voter-count: ${DEMODAY_TOTAL_VOTER_COUNT:0}

@@ -4,6 +4,7 @@ import com.ceos.vote.domain.vote.dto.request.DemodayVoteRequest;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteResponse;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteResultResponse;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteStatusResponse;
+import com.ceos.vote.domain.vote.dto.response.DemodayTeamResponse;
 import com.ceos.vote.domain.vote.service.DemodayVoteService;
 import com.ceos.vote.global.apiPayload.ApiResponse;
 import com.ceos.vote.global.apiPayload.code.status.SuccessStatus;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,6 +60,15 @@ public class DemodayVoteController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.of(SuccessStatus.CREATED, demodayVoteService.vote(request)));
+    }
+
+    @Operation(
+            summary = "데모데이 투표 팀 목록 조회",
+            description = "투표할 수 있는 데모데이 팀 목록을 enum 정의 순서로 조회합니다."
+    )
+    @GetMapping("/teams")
+    public ApiResponse<List<DemodayTeamResponse>> getTeams() {
+        return ApiResponse.onSuccess(demodayVoteService.getTeams());
     }
 
     @Operation(

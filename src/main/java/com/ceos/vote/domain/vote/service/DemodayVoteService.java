@@ -7,6 +7,7 @@ import com.ceos.vote.domain.vote.dto.request.DemodayVoteRequest;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteResponse;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteResultResponse;
 import com.ceos.vote.domain.vote.dto.response.DemodayVoteStatusResponse;
+import com.ceos.vote.domain.vote.dto.response.DemodayTeamResponse;
 import com.ceos.vote.domain.vote.dto.response.TeamVoteCountResponse;
 import com.ceos.vote.domain.vote.entity.DemodayVote;
 import com.ceos.vote.domain.vote.exception.VoteErrorStatus;
@@ -59,6 +60,12 @@ public class DemodayVoteService {
                 isResultOpen(totalVoterCount, votedCount),
                 getTeamVoteCounts()
         );
+    }
+
+    public List<DemodayTeamResponse> getTeams() {
+        return Arrays.stream(Team.values())
+                .map(DemodayTeamResponse::from)
+                .toList();
     }
 
     public DemodayVoteResultResponse getResult() {

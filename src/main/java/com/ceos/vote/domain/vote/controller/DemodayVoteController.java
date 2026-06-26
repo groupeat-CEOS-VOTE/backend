@@ -8,8 +8,7 @@ import com.ceos.vote.domain.vote.service.DemodayVoteService;
 import com.ceos.vote.global.apiPayload.ApiResponse;
 import com.ceos.vote.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +32,7 @@ public class DemodayVoteController {
             summary = "데모데이 투표 참여",
             description = "로그인한 사용자가 본인 팀을 제외한 데모데이 참여 팀에 한 번 투표합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @SecurityRequirement(name = "accessTokenCookie")
     @PostMapping
     public ResponseEntity<ApiResponse<DemodayVoteResponse>> vote(
             @Valid @RequestBody DemodayVoteRequest request

@@ -10,7 +10,7 @@ import com.ceos.vote.global.apiPayload.ApiResponse;
 import com.ceos.vote.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +37,7 @@ public class PartLeaderVoteController {
             summary = "파트장 후보 목록 조회",
             description = "로그인한 사용자의 파트에 해당하는 파트장 후보 목록을 조회합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @SecurityRequirement(name = "accessTokenCookie")
     @GetMapping("/candidates")
     public ApiResponse<List<PartLeaderCandidateResponse>> getCandidates() {
         return ApiResponse.onSuccess(partLeaderVoteService.getCandidates());
@@ -61,9 +59,7 @@ public class PartLeaderVoteController {
             summary = "파트장 투표 참여",
             description = "로그인한 사용자가 본인 파트의 파트장 후보에게 한 번 투표합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @SecurityRequirement(name = "accessTokenCookie")
     @PostMapping
     public ResponseEntity<ApiResponse<PartLeaderVoteResponse>> vote(
             @Valid @RequestBody PartLeaderVoteRequest request
@@ -77,9 +73,7 @@ public class PartLeaderVoteController {
             summary = "파트장 투표 결과 조회",
             description = "로그인한 사용자의 파트에 해당하는 파트장 투표 결과를 득표 수 내림차순으로 조회합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @SecurityRequirement(name = "accessTokenCookie")
     @GetMapping("/results")
     public ApiResponse<PartLeaderVoteResultResponse> getResult() {
         return ApiResponse.onSuccess(partLeaderVoteService.getResult());

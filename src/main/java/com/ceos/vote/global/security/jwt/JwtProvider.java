@@ -25,7 +25,7 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access-token-expiration-seconds}") long accessTokenExpirationSeconds
+            @Value("${jwt.access-token-expiration-seconds:3600}") long accessTokenExpirationSeconds
     ) {
 
         this.secretKey = secretKey;

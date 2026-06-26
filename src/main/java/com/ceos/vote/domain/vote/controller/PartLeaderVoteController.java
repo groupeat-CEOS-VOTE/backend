@@ -41,6 +41,10 @@ public class PartLeaderVoteController {
             description = "로그인한 사용자의 파트에 해당하는 파트장 후보 목록을 조회합니다."
     )
     @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":true,"code":"COMMON200","message":"성공입니다.","result":[{"candidateId":1,"name":"김동욱","part":"BACKEND","partName":"백엔드","affiliation":"백엔드","imageUrl":null}]}
+                            """))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                             {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
@@ -57,6 +61,10 @@ public class PartLeaderVoteController {
             description = "선택한 파트장 후보의 이름, 소속, 사진, 소개 정보를 조회합니다."
     )
     @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":true,"code":"COMMON200","message":"성공입니다.","result":{"candidateId":1,"name":"김동욱","part":"BACKEND","partName":"백엔드","affiliation":"백엔드","imageUrl":null,"description":"백엔드 파트장 후보 김동욱입니다."}}
+                            """))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "후보 없음",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                             {"isSuccess":false,"code":"VOTE4041","message":"후보를 찾을 수 없습니다.","result":null}
@@ -75,6 +83,10 @@ public class PartLeaderVoteController {
             description = "로그인한 사용자가 본인 파트의 파트장 후보에게 한 번 투표합니다."
     )
     @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "투표 완료",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":true,"code":"COMMON201","message":"생성이 완료되었습니다.","result":{"voteId":1,"candidateId":1,"candidateName":"김동욱"}}
+                            """))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                             {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
@@ -107,6 +119,10 @@ public class PartLeaderVoteController {
             description = "로그인한 사용자의 파트에 해당하는 파트장 투표 결과를 득표 수 내림차순으로 조회합니다."
     )
     @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":true,"code":"COMMON200","message":"성공입니다.","result":{"part":"BACKEND","partName":"백엔드","candidates":[{"candidateId":1,"name":"김동욱","affiliation":"백엔드","imageUrl":null,"voteCount":7}]}}
+                            """))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
                             {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}

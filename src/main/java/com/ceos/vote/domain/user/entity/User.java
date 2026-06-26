@@ -1,7 +1,7 @@
 package com.ceos.vote.domain.user.entity;
 
-import com.ceos.vote.domain.user.enums.Part;
-import com.ceos.vote.domain.user.enums.Team;
+import com.ceos.vote.domain.common.enums.Part;
+import com.ceos.vote.domain.common.enums.Team;
 import com.ceos.vote.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

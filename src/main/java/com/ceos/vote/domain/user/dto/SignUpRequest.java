@@ -1,7 +1,7 @@
 package com.ceos.vote.domain.user.dto;
 
-import com.ceos.vote.domain.user.enums.Part;
-import com.ceos.vote.domain.user.enums.Team;
+import com.ceos.vote.domain.common.enums.Part;
+import com.ceos.vote.domain.common.enums.Team;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

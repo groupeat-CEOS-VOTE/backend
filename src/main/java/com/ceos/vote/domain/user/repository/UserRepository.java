@@ -1,8 +1,8 @@
 package com.ceos.vote.domain.user.repository;
 
+import com.ceos.vote.domain.common.enums.Part;
+import com.ceos.vote.domain.common.enums.Team;
 import com.ceos.vote.domain.user.entity.User;
-import com.ceos.vote.domain.user.enums.Part;
-import com.ceos.vote.domain.user.enums.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

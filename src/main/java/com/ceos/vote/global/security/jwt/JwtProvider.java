@@ -4,6 +4,7 @@ import com.ceos.vote.global.apiPayload.code.status.GlobalErrorStatus;
 import com.ceos.vote.global.exception.GeneralException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -16,9 +17,20 @@ import java.util.Base64;
 @Component
 public class JwtProvider {
 
-    private static final String SECRET_KEY = "ceos-vote-local-development-secret-key-for-hs256";
-    private static final long ACCESS_TOKEN_EXPIRATION_SECONDS = 60 * 60;
+    private static final int MIN_SECRET_KEY_LENGTH = 32;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private final String secretKey;
+    private final long accessTokenExpirationSeconds;
+
+    public JwtProvider(
+            @Value("${jwt.secret}") String secretKey,
+            @Value("${jwt.access-token-expiration-seconds}") long accessTokenExpirationSeconds
+    ) {
+
+        this.secretKey = secretKey;
+        this.accessTokenExpirationSeconds = accessTokenExpirationSeconds;
+    }
 
     public String createAccessToken(Long userId) {
         Instant now = Instant.now();
@@ -27,7 +39,7 @@ public class JwtProvider {
                 "{\"sub\":\"%d\",\"iat\":%d,\"exp\":%d}",
                 userId,
                 now.getEpochSecond(),
-                now.plusSeconds(ACCESS_TOKEN_EXPIRATION_SECONDS).getEpochSecond()
+                now.plusSeconds(accessTokenExpirationSeconds).getEpochSecond()
         );
 
         String encodedHeader = base64UrlEncode(header.getBytes(StandardCharsets.UTF_8));
@@ -71,7 +83,7 @@ public class JwtProvider {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKeySpec = new SecretKeySpec(
-                    SECRET_KEY.getBytes(StandardCharsets.UTF_8),
+                    secretKey.getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256"
             );
             mac.init(secretKeySpec);

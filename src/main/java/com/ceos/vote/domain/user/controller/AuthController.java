@@ -40,16 +40,40 @@ public class AuthController {
     ) {
         AuthService.LoginResult loginResult = authService.login(request);
 
-        ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, loginResult.accessToken())
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, createAccessTokenCookie(loginResult.accessToken()).toString());
+
+        return ApiResponse.onSuccess(loginResult.response());
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "accessToken 쿠키를 만료시켜 로그아웃합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "로그아웃 성공. 응답 헤더에 만료된 accessToken 쿠키가 포함됩니다.",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":true,"code":"COMMON200","message":"성공입니다.","result":null}
+                            """)))
+    })
+    public ApiResponse<Void> logout(HttpServletResponse servletResponse) {
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, expireAccessTokenCookie().toString());
+
+        return ApiResponse.onSuccess(null);
+    }
+
+    private ResponseCookie createAccessTokenCookie(String accessToken) {
+        return createAccessTokenCookie(accessToken, ACCESS_TOKEN_COOKIE_MAX_AGE_SECONDS);
+    }
+
+    private ResponseCookie expireAccessTokenCookie() {
+        return createAccessTokenCookie("", 0);
+    }
+
+    private ResponseCookie createAccessTokenCookie(String value, long maxAgeSeconds) {
+        return ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, value)
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(ACCESS_TOKEN_COOKIE_MAX_AGE_SECONDS)
+                .maxAge(maxAgeSeconds)
                 .sameSite("Lax")
                 .build();
-
-        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        return ApiResponse.onSuccess(loginResult.response());
     }
 }

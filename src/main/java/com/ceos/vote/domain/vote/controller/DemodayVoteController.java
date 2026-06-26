@@ -7,9 +7,11 @@ import com.ceos.vote.domain.vote.dto.response.DemodayVoteStatusResponse;
 import com.ceos.vote.domain.vote.service.DemodayVoteService;
 import com.ceos.vote.global.apiPayload.ApiResponse;
 import com.ceos.vote.global.apiPayload.code.status.SuccessStatus;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +35,21 @@ public class DemodayVoteController {
             summary = "데모데이 투표 참여",
             description = "로그인한 사용자가 본인 팀을 제외한 데모데이 참여 팀에 한 번 투표합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
+                            """))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "본인 팀 투표 불가",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4032","message":"본인이 속한 팀에는 투표할 수 없습니다.","result":null}
+                            """))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "중복 투표",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4091","message":"이미 투표했습니다.","result":null}
+                            """)))
+    })
+    @SecurityRequirement(name = "accessTokenCookie")
     @PostMapping
     public ResponseEntity<ApiResponse<DemodayVoteResponse>> vote(
             @Valid @RequestBody DemodayVoteRequest request
@@ -58,6 +72,12 @@ public class DemodayVoteController {
             summary = "데모데이 투표 결과 조회",
             description = "모든 회원의 투표가 완료된 뒤 데모데이 투표 결과를 조회합니다."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "결과 미공개",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4031","message":"아직 모든 투표가 완료되지 않아 결과를 조회할 수 없습니다.","result":null}
+                            """)))
+    })
     @GetMapping("/results")
     public ApiResponse<DemodayVoteResultResponse> getResult() {
         return ApiResponse.onSuccess(demodayVoteService.getResult());

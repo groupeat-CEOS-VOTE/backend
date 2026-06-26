@@ -8,9 +8,12 @@ import com.ceos.vote.domain.vote.dto.response.PartLeaderVoteResultResponse;
 import com.ceos.vote.domain.vote.service.PartLeaderVoteService;
 import com.ceos.vote.global.apiPayload.ApiResponse;
 import com.ceos.vote.global.apiPayload.code.status.SuccessStatus;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +40,13 @@ public class PartLeaderVoteController {
             summary = "파트장 후보 목록 조회",
             description = "로그인한 사용자의 파트에 해당하는 파트장 후보 목록을 조회합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
+                            """)))
+    })
+    @SecurityRequirement(name = "accessTokenCookie")
     @GetMapping("/candidates")
     public ApiResponse<List<PartLeaderCandidateResponse>> getCandidates() {
         return ApiResponse.onSuccess(partLeaderVoteService.getCandidates());
@@ -49,6 +56,12 @@ public class PartLeaderVoteController {
             summary = "파트장 후보 상세 조회",
             description = "선택한 파트장 후보의 이름, 소속, 사진, 소개 정보를 조회합니다."
     )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "후보 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4041","message":"후보를 찾을 수 없습니다.","result":null}
+                            """)))
+    })
     @GetMapping("/candidates/{candidateId}")
     public ApiResponse<PartLeaderCandidateDetailResponse> getCandidate(
             @Parameter(description = "후보 ID", example = "1")
@@ -61,9 +74,25 @@ public class PartLeaderVoteController {
             summary = "파트장 투표 참여",
             description = "로그인한 사용자가 본인 파트의 파트장 후보에게 한 번 투표합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
+                            """))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "다른 파트 후보 투표 불가",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4033","message":"본인 파트의 후보에게만 투표할 수 있습니다.","result":null}
+                            """))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "후보 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4041","message":"후보를 찾을 수 없습니다.","result":null}
+                            """))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "중복 투표",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"VOTE4091","message":"이미 투표했습니다.","result":null}
+                            """)))
+    })
+    @SecurityRequirement(name = "accessTokenCookie")
     @PostMapping
     public ResponseEntity<ApiResponse<PartLeaderVoteResponse>> vote(
             @Valid @RequestBody PartLeaderVoteRequest request
@@ -77,9 +106,13 @@ public class PartLeaderVoteController {
             summary = "파트장 투표 결과 조회",
             description = "로그인한 사용자의 파트에 해당하는 파트장 투표 결과를 득표 수 내림차순으로 조회합니다."
     )
-    @Parameter(name = "X-USER-ID", in = ParameterIn.HEADER, required = true, example = "1", description = "임시 인증 사용자 ID")
-    @Parameter(name = "X-USER-PART", in = ParameterIn.HEADER, required = true, example = "BACKEND", description = "임시 인증 사용자 파트")
-    @Parameter(name = "X-USER-TEAM", in = ParameterIn.HEADER, required = true, example = "GROUPEAT", description = "임시 인증 사용자 소속 팀")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                            {"isSuccess":false,"code":"COMMON401","message":"인증이 필요합니다.","result":null}
+                            """)))
+    })
+    @SecurityRequirement(name = "accessTokenCookie")
     @GetMapping("/results")
     public ApiResponse<PartLeaderVoteResultResponse> getResult() {
         return ApiResponse.onSuccess(partLeaderVoteService.getResult());

@@ -36,6 +36,10 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+bootJar {
+    mainClass = 'com.ceos.vote.VoteApplication'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

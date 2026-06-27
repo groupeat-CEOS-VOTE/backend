@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -27,4 +27,4 @@ jwt:
 
 vote:
   demoday:
-    total-voter-count: ${DEMODAY_TOTAL_VOTER_COUNT:0}
+    total-voter-count: ${DEMODAY_TOTAL_VOTER_COUNT:20}

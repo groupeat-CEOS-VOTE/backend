@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum UserErrorStatus implements BaseErrorCode {
 
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4000", "입력하신 정보와 일치하는 회원이 없거나 초대코드가 올바르지 않습니다."),
+    DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "USER4091", "이미 사용 중인 아이디입니다."),
     MEMBER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "USER4090", "이미 가입된 회원입니다.");
 
     private final HttpStatus httpStatus;

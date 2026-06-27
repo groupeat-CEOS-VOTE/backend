@@ -31,6 +31,10 @@ public class UserService {
             throw new GeneralException(UserErrorStatus.MEMBER_ALREADY_REGISTERED);
         }
 
+        if (userRepository.existsByLoginId(request.loginId())) {
+            throw new GeneralException(UserErrorStatus.DUPLICATE_LOGIN_ID);
+        }
+
         user.signUp(request.loginId(), passwordEncoder.encode(request.password()));
     }
 }
